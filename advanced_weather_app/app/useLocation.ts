@@ -53,9 +53,9 @@ const getLocation = async (): Promise<Coords | null> => {
   }
 
   try {
-    const { coords } = (await Location.getCurrentPositionAsync({
+    const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.High,
-    })) || { latitude: 48.8397, longitude: 2.2421 };
+    });
     return { latitude: coords.latitude, longitude: coords.longitude };
   } catch (e) {
     console.warn("Could not get position:", e);
@@ -162,34 +162,35 @@ export const useLocation = (externalCoords: {
 }) => {
   const [address, setAddress] = useState<string>("");
   const [coords, setCoords] = useState<Coords>({
-    latitude: undefined,
-    longitude: undefined,
+    latitude: externalCoords.latitude,
+    longitude: externalCoords.longitude,
   });
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
-  const activeCoords = externalCoords ?? coords;
-  // Fetch forecast weather when coords change
-  // useEffect(() => {
-  //   getWeather({
-  //     latitude: coords.latitude,
-  //     longitude: coords.longitude,
-  //     hourly: ["temperature_2m"],
-  //     current: "temperature_2m",
-  //   }).then(setWeatherData);
-  // }, []);
+  const activeCoords = coords;
 
-  // Fetch ensemble weather when coords change
+  useEffect(() => {
+    if (
+      externalCoords?.latitude !== undefined &&
+      externalCoords?.longitude !== undefined
+    ) {
+      setCoords({
+        latitude: externalCoords.latitude,
+        longitude: externalCoords.longitude,
+      });
+    }
+  }, [externalCoords?.latitude, externalCoords?.longitude]);
+
   useEffect(() => {
     const fetchForecasts = async () => {
       if (
-        (externalCoords.latitude === undefined ||
-          externalCoords.longitude === undefined) &&
-        (coords.latitude === undefined || coords.longitude === undefined)
+        activeCoords.latitude === undefined ||
+        activeCoords.longitude === undefined
       )
         return;
       const response = await getForecasts({
-        latitude: externalCoords.latitude ?? coords.latitude,
-        longitude: externalCoords.longitude ?? coords.longitude,
+        latitude: activeCoords.latitude,
+        longitude: activeCoords.longitude,
         daily: [
           "weather_code",
           "temperature_2m_max",
