@@ -1,8 +1,8 @@
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
-import { View } from "react-native";
+import { View, Dimensions } from "react-native";
 import getWeatherCode from "./weatherCodes";
-import { LineChart } from "react-native-gifted-charts";
+import { LineChart } from "react-native-chart-kit";
 
 // types.ts
 export interface WeatherData {
@@ -62,6 +62,7 @@ interface TodayRouteProps {
     weather_code: number | undefined;
     wind_speed_10m: number | undefined;
   }[];
+  chartConfig: {};
 }
 
 interface WeeklyRouteProps {
@@ -73,12 +74,17 @@ interface WeeklyRouteProps {
     weather_code: number | undefined;
     wind_speed_10m_max: number | undefined;
   }[];
+  chartConfig: {};
 }
 
 const truncate = (str: string, maxLength: number = 5) =>
   str.length > maxLength ? str.slice(0, maxLength) + "…" : str;
 
-const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
+const TodayRoute = ({
+  location,
+  todayHourly,
+  chartConfig,
+}: TodayRouteProps) => (
   <View
     style={{
       width: "100%",
@@ -100,33 +106,39 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
         overflow: "scroll",
       }}
     >
-      <Text>{location}</Text>
+      <Text style={{ display: "flex", padding: 20 }}>{location}</Text>
       <View
         style={{
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#534DB3",
-          padding: 10,
           alignSelf: "center",
         }}
       >
-        <View>
+        <View
+          style={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+            borderRadius: 20,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <LineChart
-            data={todayHourly.map((h) => ({
-              value: h.temperature_2m ?? 0,
-              dataPointText: h.time.toLocaleTimeString(),
-            }))}
-            initialSpacing={0}
-            spacing={30}
-            hideDataPoints
-            thickness={2}
-            hideRules
-            hideYAxisText
-            yAxisColor="white"
-            showVerticalLines
-            verticalLinesColor="gray"
-            xAxisColor="white"
-            color="white"
+            data={{
+              labels: todayHourly.map((h) => h.time.getHours().toString()),
+              datasets: [
+                {
+                  data: todayHourly.map((h) => h.temperature_2m ?? 0),
+                },
+              ],
+            }}
+            chartConfig={chartConfig}
+            width={Dimensions.get("window").width - 40}
+            height={220}
+            withDots={false}
+            hidePointsAtIndex={[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]}
+            yAxisSuffix="°C"
           />
         </View>
       </View>
@@ -158,7 +170,7 @@ const TodayRoute = ({ location, todayHourly }: TodayRouteProps) => (
   </View>
 );
 
-const WeeklyRoute = ({ location, weekly }: WeeklyRouteProps) => (
+const WeeklyRoute = ({ location, weekly, chartConfig }: WeeklyRouteProps) => (
   <View
     style={{
       width: "100%",
@@ -231,6 +243,17 @@ const CBottomNav = ({ message, location, weatherData, style }: Props) => {
       unfocusedIcon: "calendar-week-outline",
     },
   ]);
+  const chartConfig = {
+    backgroundGradientFrom: "#534DB3",
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: "#534DB3",
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(83, 77, 179, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+    decimalPlaces: 1,
+  };
 
   const todayHourly =
     weatherData?.hourly.time
@@ -282,7 +305,11 @@ const CBottomNav = ({ message, location, weatherData, style }: Props) => {
       ),
     today: () =>
       message === "" ? (
-        <TodayRoute location={location} todayHourly={todayHourly} />
+        <TodayRoute
+          location={location}
+          todayHourly={todayHourly}
+          chartConfig={chartConfig}
+        />
       ) : (
         <View
           style={{
@@ -299,7 +326,11 @@ const CBottomNav = ({ message, location, weatherData, style }: Props) => {
       ),
     weekly: () =>
       message === "" ? (
-        <WeeklyRoute location={location} weekly={weekly} />
+        <WeeklyRoute
+          location={location}
+          weekly={weekly}
+          chartConfig={chartConfig}
+        />
       ) : (
         <View
           style={{
