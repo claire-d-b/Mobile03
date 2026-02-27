@@ -106,41 +106,38 @@ const TodayRoute = ({
         overflow: "scroll",
       }}
     >
-      <Text style={{ display: "flex", padding: 20 }}>{location}</Text>
+      <Text>{location}</Text>
       <View
         style={{
           display: "flex",
-          flexDirection: "column",
-          alignSelf: "center",
+          width: "100%",
+          borderRadius: 20,
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <View
+        <LineChart
+          data={{
+            labels: todayHourly.map((h) => h.time.getHours().toString()),
+            datasets: [
+              {
+                data: todayHourly.map((h) => h.temperature_2m ?? 0),
+              },
+            ],
+          }}
+          chartConfig={chartConfig}
+          width={Dimensions.get("window").width - 20}
+          height={220}
+          withDots={false}
+          hidePointsAtIndex={[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]}
+          yAxisSuffix="°C"
+          withShadow
           style={{
             display: "flex",
-            width: "100%",
-            height: "100%",
-            borderRadius: 20,
-            justifyContent: "center",
-            alignItems: "center",
+            padding: 20,
+            borderRadius: 16,
           }}
-        >
-          <LineChart
-            data={{
-              labels: todayHourly.map((h) => h.time.getHours().toString()),
-              datasets: [
-                {
-                  data: todayHourly.map((h) => h.temperature_2m ?? 0),
-                },
-              ],
-            }}
-            chartConfig={chartConfig}
-            width={Dimensions.get("window").width - 40}
-            height={220}
-            withDots={false}
-            hidePointsAtIndex={[1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23]}
-            yAxisSuffix="°C"
-          />
-        </View>
+        />
       </View>
       {!!todayHourly?.length &&
         todayHourly.map((h, i) => {
@@ -245,12 +242,11 @@ const CBottomNav = ({ message, location, weatherData, style }: Props) => {
   ]);
   const chartConfig = {
     backgroundGradientFrom: "#534DB3",
-    backgroundGradientFromOpacity: 0,
+    backgroundGradientFromOpacity: 0.25,
     backgroundGradientTo: "#534DB3",
-    backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(83, 77, 179, ${opacity})`,
+    backgroundGradientToOpacity: 0.25,
+    color: (opacity = 1) => `rgba(83, 77, 179, ${opacity + 0.25})`,
     strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
     useShadowColorFromDataset: false, // optional
     decimalPlaces: 1,
   };
