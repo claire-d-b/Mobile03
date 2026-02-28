@@ -8,29 +8,6 @@ import CBottomNav from "./CBottomNav";
 import { useLocation, getPlacesList, getLocationName } from "./useLocation";
 import getForecasts from "./ensemble";
 
-const messages = [
-  "7",
-  "8",
-  "9",
-  "C",
-  "AC",
-  "4",
-  "5",
-  "6",
-  "+",
-  "-",
-  "1",
-  "2",
-  "3",
-  "x",
-  "/",
-  "0",
-  ".",
-  "00",
-  "=",
-  "",
-];
-
 interface Place {
   name: string;
   admin1: string;

@@ -3,6 +3,10 @@ import { BottomNavigation, Text } from "react-native-paper";
 import { View, Dimensions } from "react-native";
 import getWeatherCode from "./weatherCodes";
 import { LineChart } from "react-native-chart-kit";
+import HourlyData from "./Hourly";
+
+export const truncate = (str: string, maxLength: number = 10) =>
+  str.length > maxLength ? str.slice(0, maxLength) + "…" : str;
 
 // types.ts
 export interface WeatherData {
@@ -77,9 +81,6 @@ interface WeeklyRouteProps {
   chartConfig: {};
 }
 
-const truncate = (str: string, maxLength: number = 10) =>
-  str.length > maxLength ? str.slice(0, maxLength) + "…" : str;
-
 const TodayRoute = ({
   location,
   todayHourly,
@@ -141,7 +142,8 @@ const TodayRoute = ({
           }}
         />
       </View>
-      {!!todayHourly?.length &&
+      <HourlyData hourly={todayHourly} />
+      {/* {!!todayHourly?.length &&
         todayHourly.map((h, i) => {
           return (
             <View
@@ -163,8 +165,8 @@ const TodayRoute = ({
               <Text>{h.wind_speed_10m?.toFixed(1)}km/h</Text>
               <Text>{truncate(getWeatherCode(h.weather_code), 10)}</Text>
             </View>
-          );
-        })}
+          ); */}
+      {/* })} */}
     </View>
   </View>
 );
