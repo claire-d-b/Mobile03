@@ -122,6 +122,8 @@ const TodayRoute = ({
             datasets: [
               {
                 data: todayHourly.map((h) => h.temperature_2m ?? 0),
+                color: (opacity = 1) => `rgba(83, 77, 179, ${opacity + 0.5})`,
+                strokeWidth: 2,
               },
             ],
           }}
@@ -200,9 +202,13 @@ const WeeklyRoute = ({ location, weekly, chartConfig }: WeeklyRouteProps) => (
           datasets: [
             {
               data: weekly.map((w) => w.temperature_2m_min ?? 0),
+              color: (opacity = 1) => `rgba(122, 225, 196, ${opacity + 0.5})`,
+              strokeWidth: 2,
             },
             {
               data: weekly.map((w) => w.temperature_2m_max ?? 0),
+              color: (opacity = 1) => `rgba(116, 160, 231, ${opacity + 0.5})`,
+              strokeWidth: 2,
             },
           ],
         }}
@@ -278,11 +284,11 @@ const CBottomNav = ({ message, location, weatherData, style }: Props) => {
     },
   ]);
   const chartConfig = {
-    backgroundGradientFrom: "#534DB3",
+    backgroundGradientFrom: "#B6C1D4",
     backgroundGradientFromOpacity: 0.25,
-    backgroundGradientTo: "#534DB3",
+    backgroundGradientTo: "#B6C1D4",
     backgroundGradientToOpacity: 0.25,
-    color: (opacity = 1) => `rgba(83, 77, 179, ${opacity + 0.25})`,
+    color: (opacity = 1) => `rgba(60, 76, 103, ${opacity + 0.5})`,
     strokeWidth: 2, // optional, default 3
     useShadowColorFromDataset: false, // optional
     decimalPlaces: 1,
