@@ -77,7 +77,7 @@ interface WeeklyRouteProps {
   chartConfig: {};
 }
 
-const truncate = (str: string, maxLength: number = 5) =>
+const truncate = (str: string, maxLength: number = 10) =>
   str.length > maxLength ? str.slice(0, maxLength) + "…" : str;
 
 const TodayRoute = ({
@@ -118,7 +118,7 @@ const TodayRoute = ({
       >
         <LineChart
           data={{
-            labels: todayHourly.map((h) => h.time.getHours().toString()),
+            labels: todayHourly.map((h) => `${h.time.getHours().toString()}h`),
             datasets: [
               {
                 data: todayHourly.map((h) => h.temperature_2m ?? 0),
@@ -159,7 +159,7 @@ const TodayRoute = ({
               </Text>
               <Text>{h.temperature_2m?.toFixed(1)}°C</Text>
               <Text>{h.wind_speed_10m?.toFixed(1)}km/h</Text>
-              <Text>{truncate(getWeatherCode(h.weather_code), 5)}</Text>
+              <Text>{truncate(getWeatherCode(h.weather_code), 10)}</Text>
             </View>
           );
         })}
@@ -180,13 +180,51 @@ const WeeklyRoute = ({ location, weekly, chartConfig }: WeeklyRouteProps) => (
     }}
   >
     <Text>Weekly</Text>
-    <View style={{ padding: 20, width: "100%" }}>
+    <View
+      style={{
+        display: "flex",
+        width: "100%",
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <LineChart
+        data={{
+          labels: weekly.map((w) =>
+            w.time.toLocaleDateString("fr-FR", {
+              day: "numeric",
+              month: "numeric",
+            }),
+          ),
+          datasets: [
+            {
+              data: weekly.map((w) => w.temperature_2m_min ?? 0),
+            },
+            {
+              data: weekly.map((w) => w.temperature_2m_max ?? 0),
+            },
+          ],
+        }}
+        chartConfig={chartConfig}
+        width={Dimensions.get("window").width - 20}
+        height={220}
+        withDots={false}
+        yAxisSuffix="°C"
+        withShadow
+        style={{
+          display: "flex",
+          padding: 20,
+          borderRadius: 16,
+        }}
+      />
       {!!weekly?.length &&
         weekly.map((w, i) => {
           return (
             <View
               key={`weekly_${i}`}
               style={{
+                width: "100%",
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-around",
@@ -195,14 +233,13 @@ const WeeklyRoute = ({ location, weekly, chartConfig }: WeeklyRouteProps) => (
             >
               <Text>
                 {w.time.toLocaleDateString("fr-FR", {
-                  weekday: "short",
                   day: "numeric",
-                  month: "short",
+                  month: "numeric",
                 })}
               </Text>
               <Text>{w.temperature_2m_min?.toFixed(1)}°C</Text>
               <Text>{w.temperature_2m_max?.toFixed(1)}km/h</Text>
-              <Text>{truncate(getWeatherCode(w.weather_code), 5)}</Text>
+              <Text>{truncate(getWeatherCode(w.weather_code), 10)}</Text>
             </View>
           );
         })}
