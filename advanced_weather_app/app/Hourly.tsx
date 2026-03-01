@@ -1,8 +1,8 @@
 import { useState } from "react";
 import CProgressBar from "./CProgressBar";
 import { View } from "react-native";
-import { Text } from "react-native-paper";
-import getWeatherCode from "./weatherCodes";
+import { Text, Icon } from "react-native-paper";
+import getWeatherCode, { getWeatherIcons } from "./weatherCodes";
 
 export const truncate = (str: string, maxLength: number = 10) =>
   str.length > maxLength ? str.slice(0, maxLength) + "…" : str;
@@ -27,11 +27,17 @@ const HourlyData = ({ hourly }: HourlyProps) => {
                 {h.time.toLocaleTimeString("fr-FR", {
                   hour: "2-digit",
                   minute: "2-digit",
+                  timeZone: "UTC",
                 })}
               </Text>
               <Text>{h.temperature_2m?.toFixed(1)}°C</Text>
               <Text>{h.wind_speed_10m?.toFixed(1)}km/h</Text>
               <Text>{truncate(getWeatherCode(h.weather_code), 10)}</Text>
+              <Icon
+                source={getWeatherIcons(h.weather_code)}
+                color="#534DB3"
+                size={20}
+              />
             </View>
           );
         })}
