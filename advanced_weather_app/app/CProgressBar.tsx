@@ -3,10 +3,11 @@ import { ProgressBar } from "react-native-paper";
 
 interface Props {
   progress: number;
+  color: string;
 }
 
-const CProgressBar = ({ progress }: Props) => {
-  return <ProgressBar progress={progress} color="#534DB3" />;
+const CProgressBar = ({ progress, color }: Props) => {
+  return <ProgressBar progress={progress} color={color} />;
 };
 
 export default CProgressBar;

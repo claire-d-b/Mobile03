@@ -81,6 +81,7 @@ npm install react-native-paper
 npm install react-native-safe-area-context
 npx pod-install # for iOS platform there is a requirement to link the native parts of the library
 npm install @react-native-vector-icons/material-design-icons
+npx expo install @react-native-community/slider
 
 cat > babel.config.js << 'EOF'
 module.exports = function (api) {
